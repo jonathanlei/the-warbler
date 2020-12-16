@@ -4,8 +4,8 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, LogoutForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message
+from forms import UserAddForm, LoginForm, LogoutForm, MessageForm, UserEditForm, LikeForm
+from models import db, connect_db, User, Message, Like
 
 CURR_USER_KEY = "curr_user"
 
@@ -36,6 +36,7 @@ def add_user_to_g():
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
         g.logout_form = LogoutForm()
+        g.like_form = LikeForm()
     else:
         g.user = None
 
@@ -294,6 +295,35 @@ def messages_destroy(message_id):
     return redirect(f"/users/{g.user.id}")
 
 
+@app.route("/messages/<int:message_id>/like", methods=["POST"])
+def messages_like(message_id):
+    """ like a message"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    if g.like_form.validate_on_submit():
+        g.user.liked_messages.append(Like(msg_id=message_id))
+        db.session.commit()
+    return redirect("/")
+
+
+@app.route("/messages/<int:message_id>/unlike", methods=["POST"])
+def messages_unlike(message_id):
+    """ unlike a message"""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    if g.like_form.validate_on_submit():
+        liked_message = Message.query.get_or_404(message_id)
+        g.user.liked_messages.remove(liked_message)
+        db.session.commit()
+
+    return redirect("/")
+
+
 ##############################################################################
 # Homepage and error pages
 
@@ -336,3 +366,5 @@ def add_header(response):
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     response.cache_control.no_store = True
     return response
+
+

@@ -39,3 +39,6 @@ class UserEditForm(FlaskForm):
     bio = StringField('Bio', validators=[DataRequired(), Length(max=160)])
     location = StringField('Location', validators=[Optional(), Length(max=50)])
     password = PasswordField('Password', validators=[Length(min=6)])
+
+class LikeForm(FlaskForm):
+    """ for Like and unlike messages"""
