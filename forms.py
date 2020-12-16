@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, Email, Length, Optional, URL
 class MessageForm(FlaskForm):
     """Form for adding/editing messages."""
 
-    text = TextAreaField('text', validators=[DataRequired()])
+    text = TextAreaField('text', validators=[DataRequired(), Length(max=140)])
 
 
 class UserAddForm(FlaskForm):
@@ -29,7 +29,7 @@ class UserEditForm(FlaskForm):
     """  Form for editing user info."""
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
-    image_url = StringField('(Optional) Image URL', 
+    image_url = StringField('(Optional) Image URL',
                             validators=[Optional()])
     header_image_url = StringField('(Optional) Header Image URL',
                                    validators=[Optional()])
