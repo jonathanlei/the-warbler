@@ -30,6 +30,7 @@
                   </form>
                 {% endif %}
               {% endif %}
+              {% include '_like.html' %}
             </div>
             <p class="single-message text-break">{{ message.text }}</p>
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>

@@ -8,12 +8,18 @@ body.error-404 {
   background-color: #1da1f2;
 }
 
+.form-group {
+  z-index: 10;
+}
+
 .form-control {
   margin-bottom: 20px;
+  z-index: 10;
 }
 
 .btn {
   border-radius: 50px;
+  z-index: 10;
 }
 
 .btn:hover {

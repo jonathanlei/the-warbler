@@ -148,6 +148,18 @@ def users_show(user_id):
     return render_template('users/show.html', user=user)
 
 
+@app.route('/users/<int:user_id>/likes')
+def show_likes(user_id):
+    """Show list of warbles this user has liked."""
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+    return render_template('likes/show.html', user=user)
+
+
 @app.route('/users/<int:user_id>/following')
 def show_following(user_id):
     """Show list of people this user is following."""
@@ -302,8 +314,10 @@ def messages_like(message_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+
     if g.like_form.validate_on_submit():
-        g.user.liked_messages.append(Like(msg_id=message_id))
+        message = Message.query.get_or_404(message_id)
+        g.user.liked_messages.append(message)
         db.session.commit()
     return redirect("/")
 
@@ -320,7 +334,6 @@ def messages_unlike(message_id):
         liked_message = Message.query.get_or_404(message_id)
         g.user.liked_messages.remove(liked_message)
         db.session.commit()
-
     return redirect("/")
 
 
@@ -366,5 +379,3 @@ def add_header(response):
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
     response.cache_control.no_store = True
     return response
-
-
