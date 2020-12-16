@@ -56,8 +56,11 @@
             <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}">
           </a>
         </li>
-        <li><a href="/messages/new">New Message</a></li>
-        <li><a href="/logout">Log out</a></li>
+        <li><a class="btn btn-link" href="/messages/new">New Message</a></li>
+        <li><form action="/logout" method="POST">
+          {{ g.logout_form.hidden_tag() }}
+          <button class="btn btn-link" type="submit">Log out</button>
+        </form></li>
       {% endif %}
 
     </ul>

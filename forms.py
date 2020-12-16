@@ -24,6 +24,9 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[Length(min=6)])
 
+class LogoutForm(FlaskForm):
+    """Empty form for passing CSRF token."""
+    print("Logout!")
 
 class UserEditForm(FlaskForm):
     """  Form for editing user info."""
