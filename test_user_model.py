@@ -52,14 +52,13 @@ class UserModelTestCase(TestCase):
         db.session.add(u)
         db.session.commit()
 
-
         # User should have no messages & no followers
         self.assertEqual(len(u.messages), 0)
         self.assertEqual(len(u.followers), 0)
         # check repr method
         self.assertEqual(u.__repr__(),
                          f"<User #{u.id}: testuser, test@test.com>")
-    
+
     def test_user_follow(self):
         """ Does the is_following and is_followed_by work?"""
 
@@ -97,8 +96,6 @@ class UserModelTestCase(TestCase):
         self.assertEqual(u2.is_following(u1), False)
         self.assertEqual(u2.is_followed_by(u1), False)
         self.assertEqual(u1.is_followed_by(u2), False)
-
-
 
 
 
