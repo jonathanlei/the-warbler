@@ -177,6 +177,9 @@ class Message(db.Model):
                                   secondary="likes",
                                   backref="liked_messages")
 
+    def __repr__(self):
+        return f"Message: {self.id}, {self.text}, {self.user_id}"
+
 
 class Like(db.Model):
     """ connection of a liked message and the user who liked it """

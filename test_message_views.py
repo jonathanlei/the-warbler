@@ -8,7 +8,7 @@
 import os
 from unittest import TestCase
 
-from models import db, connect_db, Message, User
+from models import db, connect_db, Message, User, Like
 
 # BEFORE we import our app, let's set an environmental variable
 # to use a different database for tests (we need to do this
@@ -37,7 +37,7 @@ class MessageViewTestCase(TestCase):
 
     def setUp(self):
         """Create test client, add sample data."""
-
+        Like.query.delete()
         User.query.delete()
         Message.query.delete()
 
@@ -70,3 +70,60 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
+    
+    def test_show_message(self):
+        """ Can the message page be shown?"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            c.post("/messages/new", data={"text": "Hello"})
+
+            m = Message.query.one()
+            resp = c.get(f"/messages/{m.id}")
+            html = resp.get_data(as_text=True)
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn("Hello", html)
+            self.assertIn('id="messages"', html)
+            
+            # test for when message id is not found
+            resp = c.get("/messages/66666666")
+            self.assertEqual(resp.status_code, 404)
+
+    def test_delete_message(self):
+        """ Can the user delete its own message? """
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
+
+            c.post("/messages/new", data={"text": "Hello"})
+            m = Message.query.one()
+
+            resp = c.post(f'/messages/{m.id}/delete', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertNotIn("Hello", html)
+            self.assertIn('id="user-show"', html)
+        
+            u2 = User.signup(username="testuser2",
+                             email="test2@test.com",
+                             password="testuser2",
+                             image_url=None)
+            db.session.commit()
+            m2 = Message(text="TestMessage2")
+            u2.messages.append(m2)
+            db.session.commit()
+
+            resp = c.post(f'/messages/{m2.id}/delete', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            self.assertIn("Access unauthorized.", html)
+
+            
+
+
+
+
+            
+
+
