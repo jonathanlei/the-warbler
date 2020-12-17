@@ -310,31 +310,33 @@ def messages_destroy(message_id):
 
 @app.route("/messages/<int:message_id>/like", methods=["POST"])
 def messages_like(message_id):
-    """ like a message"""
+    """ like a message, pass liked=false to the helper function"""
 
+    return change_like(liked=False, message_id=message_id)
+
+
+@app.route("/messages/<int:message_id>/unlike", methods=["POST"])
+def messages_unlike(message_id):
+    """ unlike a message pass=true to the helper function"""
+
+    return change_like(liked=True, message_id=message_id)
+
+
+def change_like(liked, message_id):
+    """ validate user, if liked is true, unlike the message.
+    if liked is false, like the message
+    redirect to home page"""
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
     if g.like_form.validate_on_submit():
         message = Message.query.get_or_404(message_id)
-        g.user.liked_messages.append(message)
-        db.session.commit()
+        if liked:
+            g.user.liked_messages.remove(message)
+        else:
+            g.user.liked_messages.append(message)
 
-    return redirect("/")
-
-
-@app.route("/messages/<int:message_id>/unlike", methods=["POST"])
-def messages_unlike(message_id):
-    """ unlike a message"""
-
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    if g.like_form.validate_on_submit():
-        liked_message = Message.query.get_or_404(message_id)
-        g.user.liked_messages.remove(liked_message)
         db.session.commit()
 
     return redirect("/")
