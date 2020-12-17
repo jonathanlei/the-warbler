@@ -37,7 +37,7 @@ def add_user_to_g():
         g.user = User.query.get(session[CURR_USER_KEY])
         g.logout_form = LogoutForm()
         g.like_form = LikeForm()
-        # create set of liked messages
+        g.liked_messages = set(g.user.liked_messages)
     else:
         g.user = None
 

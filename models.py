@@ -36,6 +36,7 @@ class User(db.Model):
     id = db.Column(
         db.Integer,
         primary_key=True,
+        autoincrement=True
     )
 
     email = db.Column(
@@ -183,7 +184,7 @@ class Like(db.Model):
     __tablename__ = "likes"
 
     user_id = db.Column(db.Integer, db.ForeignKey(User.id), primary_key=True)
-    msg_id = db.Column(db.Integer, db.ForeignKey(Message.id), primary_key=True)  
+    msg_id = db.Column(db.Integer, db.ForeignKey(Message.id), primary_key=True)
 
 
 def connect_db(app):

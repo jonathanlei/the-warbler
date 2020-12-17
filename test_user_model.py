@@ -7,7 +7,7 @@
 
 import os
 from unittest import TestCase
-
+from sqlalchemy.exc import IntegrityError
 from models import db, User, Message, Follows
 
 # BEFORE we import our app, let's set an environmental variable
@@ -39,6 +39,7 @@ class UserModelTestCase(TestCase):
         Follows.query.delete()
 
         self.client = app.test_client()
+
 
     def test_user_model(self):
         """Does basic model work?"""
@@ -98,7 +99,62 @@ class UserModelTestCase(TestCase):
         self.assertEqual(u1.is_followed_by(u2), False)
 
 
+    def test_user_register(self):
+        """ Can we create new users?"""
+
+        new_user = User.signup(username="new.user",
+                               email="new.user@register.com",
+                               password="HASH_THIS_PASS",
+                               image_url="https://vignette.wikia.nocookie.net/questionablecontent/images/7/7a/Yelling_Bird.png/revision/latest?cb=20100107084653")
+        # print(new_user)
+        db.session.commit()
+
+        self.assertIsNotNone(new_user.id)
+        self.assertEqual(f"{new_user}",
+                        f"<User #{new_user.id}: new.user, new.user@register.com>")
+
+    def test_user_register_validation(self):
+        """ Can we create new users?"""
+
+        new_user = User.signup(username="new.user",
+                            email="new_user@test.com",
+                            password="HASH_THIS_PASS",
+                            image_url="https://vignette.wikia.nocookie.net/questionablecontent/images/7/7a/Yelling_Bird.png/revision/latest?cb=20100107084653")
+
+        new_user = User.signup(username="new.user",
+                            email="new_user@test.com",
+                            password="HASH_THIS_PASS",
+                            image_url=None)
+        try:
+            db.session.commit()
+        except IntegrityError as e:
+            # print(e)
+            self.assertIn("duplicate key value violates unique constraint \"users_email_key\"", f"{e}")
+            self.assertIsNone(new_user.id)
+            self.assertNotEqual(f"{new_user}",
+                f"<User #{new_user.id}: new.user, new.user@register.com>")
+
+
+    def test_user_authentication(self):
+        """ Can we login as a user?"""
+        user = self._create_test_user()
+        print(user)
+
+        auth = User.authenticate("testuser42", "HASHED_PASSWORD")
+        print("AUTH:",auth)
+        self.assertNotEqual(auth, False)
+        self.assertEqual(f"{auth}",
+                         f"<User #{auth.id}: testuser42, test_42@test.com>")
 
 
 
-
+    def _create_test_user(self):
+        """ Create user to login with. """
+        u = User(
+        email="test_42@test.com",
+        username="testuser42",
+        password="HASHED_PASSWORD"
+        )
+        db.session.add(u)
+        db.session.commit()
+        return u
