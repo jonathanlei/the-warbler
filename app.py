@@ -37,6 +37,7 @@ def add_user_to_g():
         g.user = User.query.get(session[CURR_USER_KEY])
         g.logout_form = LogoutForm()
         g.like_form = LikeForm()
+        # create set of liked messages
     else:
         g.user = None
 
@@ -319,6 +320,7 @@ def messages_like(message_id):
         message = Message.query.get_or_404(message_id)
         g.user.liked_messages.append(message)
         db.session.commit()
+
     return redirect("/")
 
 
@@ -334,6 +336,7 @@ def messages_unlike(message_id):
         liked_message = Message.query.get_or_404(message_id)
         g.user.liked_messages.remove(liked_message)
         db.session.commit()
+
     return redirect("/")
 
 
