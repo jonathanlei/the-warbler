@@ -138,10 +138,9 @@ class UserModelTestCase(TestCase):
     def test_user_authentication(self):
         """ Can we login as a user?"""
         user = self._create_test_user()
-        print(user)
-
+        # print(user)
         auth = User.authenticate("testuser42", "HASHED_PASSWORD")
-        print("AUTH:",auth)
+        # print("AUTH:",auth)
         self.assertNotEqual(auth, False)
         self.assertEqual(f"{auth}",
                          f"<User #{auth.id}: testuser42, test_42@test.com>")
@@ -150,10 +149,11 @@ class UserModelTestCase(TestCase):
 
     def _create_test_user(self):
         """ Create user to login with. """
-        u = User(
-        email="test_42@test.com",
-        username="testuser42",
-        password="HASHED_PASSWORD"
+        u = User.signup(
+                email="test_42@test.com",
+                username="testuser42",
+                password="HASHED_PASSWORD",
+                image_url="https://vignette.wikia.nocookie.net/questionablecontent/images/7/7a/Yelling_Bird.png/revision/latest?cb=20100107084653"
         )
         db.session.add(u)
         db.session.commit()
