@@ -145,6 +145,22 @@ class UserModelTestCase(TestCase):
         self.assertEqual(f"{auth}",
                          f"<User #{auth.id}: testuser42, test_42@test.com>")
 
+    def test_user_authentication_bad_username(self):
+        """ Will a bad username fail to create user? """
+        user = self._create_test_user()
+        # print(user)
+        auth = User.authenticate("fails", "HASHED_PASSWORD")
+        # print("AUTH:",auth)
+        self.assertEqual(auth, False)
+
+
+    def test_user_authentication_bad_password(self):
+        """ Will a bad password fail to create user? """
+        user = self._create_test_user()
+        # print(user)
+        auth = User.authenticate("testuser42", "PASSWORD_fails")
+        # print("AUTH:",auth)
+        self.assertEqual(auth, False)
 
 
     def _create_test_user(self):
