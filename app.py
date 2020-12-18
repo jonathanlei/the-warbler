@@ -289,7 +289,7 @@ def messages_add():
         g.user.messages.append(msg)
         db.session.commit()
 
-        return redirect(f"/users/{g.user.id}")
+        return render_template(f"_message.html", message=msg, user=g.user)
 
     return render_template('messages/new.html', form=form)
 
