@@ -104,8 +104,7 @@ class UserViewTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.user_id
-            resp1 = c.post("/logout",
-                           follow_redirects=True)
+            c.post("/logout", follow_redirects=True)
             resp = c.get("/users/profile", follow_redirects=True)
             html = resp.get_data(as_text=True)
             self.assertEqual(resp.status_code, 200)
@@ -119,7 +118,7 @@ class UserViewTestCase(TestCase):
         resp = c.get("/users", follow_redirects=True)
         html = resp.get_data(as_text=True)
         self.assertEqual(resp.status_code, 200)
-        self.assertIn("users-index", html)
+        self.assertIn('id="users-index"', html)
 
     def test_view_userid(self):
         """ Test /users/{user_id} """
@@ -169,7 +168,7 @@ class UserViewTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.user_id
-        
+        # helper
         u2 = User.signup(username="testuser2",
                          email="test2@test.com",
                          password="testuser2",
@@ -187,7 +186,7 @@ class UserViewTestCase(TestCase):
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.user_id
-
+        #helper
         u2 = User.signup(username="testuser2",
                          email="test2@test.com",
                          password="testuser2",
@@ -213,6 +212,7 @@ class UserViewTestCase(TestCase):
         html = resp.get_data(as_text=True)
         self.assertEqual(resp.status_code, 200)
         self.assertIn("Edit Your Profile", html)
+        #
 
     def test_edit_profile(self):
         """ View the user's profile for editing.
@@ -229,7 +229,7 @@ class UserViewTestCase(TestCase):
                             "bio": "Warbles are the best",
                             "password": "testuser"},
                       follow_redirects=True)
-        
+  
         html = resp.get_data(as_text=True)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('id="user-details"', html)
@@ -285,7 +285,7 @@ class UserViewTestCase(TestCase):
                 sess[CURR_USER_KEY] = self.user_id
         resp = c.post("/users/delete", follow_redirects=True)
         html = resp.get_data(as_text=True)
- 
+
         self.assertIsNone(User.query.get(self.user_id))
         self.assertEqual(resp.status_code, 200)
         self.assertIn("Join Warbler today.", html)
