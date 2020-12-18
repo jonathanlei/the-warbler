@@ -1,0 +1,16 @@
+<li class="list-group-item">
+    <a href="/messages/{{ message.id }}" class="message-link"/>
+    <a href="/users/{{ user.id }}">
+        <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
+    </a>
+
+    <div class="message-area">
+        <a href="/users/{{ user.id }}">@{{ user.username }}</a>
+        <span class="text-muted">
+            {{ message.timestamp.strftime('%d %B %Y') }}
+        </span>
+        <p class="text-wrap text-break">{{ message.text }}</p>
+    </div>
+
+    {% include '_like.html' %}
+</li>
