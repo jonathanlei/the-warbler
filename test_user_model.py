@@ -40,6 +40,9 @@ class UserModelTestCase(TestCase):
 
         self.client = app.test_client()
 
+    def tearDown(self):
+        """ Rollback transactions """
+        db.session.rollback()
 
     def test_user_model(self):
         """Does basic model work?"""
@@ -98,7 +101,6 @@ class UserModelTestCase(TestCase):
         self.assertEqual(u2.is_followed_by(u1), False)
         self.assertEqual(u1.is_followed_by(u2), False)
 
-
     def test_user_register(self):
         """ Can we create new users?"""
 
@@ -111,20 +113,20 @@ class UserModelTestCase(TestCase):
 
         self.assertIsNotNone(new_user.id)
         self.assertEqual(f"{new_user}",
-                        f"<User #{new_user.id}: new.user, new.user@register.com>")
+                         f"<User #{new_user.id}: new.user, new.user@register.com>")
 
     def test_user_register_validation(self):
         """ Can we create new users?"""
 
         new_user = User.signup(username="new.user",
-                            email="new_user@test.com",
-                            password="HASH_THIS_PASS",
-                            image_url="https://vignette.wikia.nocookie.net/questionablecontent/images/7/7a/Yelling_Bird.png/revision/latest?cb=20100107084653")
+                               email="new_user@test.com",
+                               password="HASH_THIS_PASS",
+                               image_url="https://vignette.wikia.nocookie.net/questionablecontent/images/7/7a/Yelling_Bird.png/revision/latest?cb=20100107084653")
 
         new_user = User.signup(username="new.user",
-                            email="new_user@test.com",
-                            password="HASH_THIS_PASS",
-                            image_url=None)
+                               email="new_user@test.com",
+                               password="HASH_THIS_PASS",
+                               image_url=None)
         try:
             db.session.commit()
         except IntegrityError as e:
@@ -134,11 +136,9 @@ class UserModelTestCase(TestCase):
             self.assertNotEqual(f"{new_user}",
                 f"<User #{new_user.id}: new.user, new.user@register.com>")
 
-
     def test_user_authentication(self):
         """ Can we login as a user?"""
         user = self._create_test_user()
-        # print(user)
         auth = User.authenticate("testuser42", "HASHED_PASSWORD")
         # print("AUTH:",auth)
         self.assertNotEqual(auth, False)
@@ -153,7 +153,6 @@ class UserModelTestCase(TestCase):
         # print("AUTH:",auth)
         self.assertEqual(auth, False)
 
-
     def test_user_authentication_bad_password(self):
         """ Will a bad password fail to create user? """
         user = self._create_test_user()
@@ -161,7 +160,6 @@ class UserModelTestCase(TestCase):
         auth = User.authenticate("testuser42", "PASSWORD_fails")
         # print("AUTH:",auth)
         self.assertEqual(auth, False)
-
 
     def _create_test_user(self):
         """ Create user to login with. """
