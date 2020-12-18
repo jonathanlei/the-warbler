@@ -46,6 +46,7 @@ def add_user_to_g():
         g.logout_form = LogoutForm()
         g.like_form = LikeForm()
         g.liked_messages = set(g.user.liked_messages)
+        g.message_form = MessageForm()
     else:
         g.user = None
 
