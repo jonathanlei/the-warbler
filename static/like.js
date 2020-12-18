@@ -2,7 +2,6 @@ $likeForm = $(".not-liked")
 $unlikeForm = $(".liked")
 
 
-
 async function handleLikeSubmit(evt){
   evt.preventDefault();
   let $form = $(evt.target);
@@ -20,3 +19,5 @@ async function handleLikeSubmit(evt){
 
 $likeForm.on("submit", handleLikeSubmit)
 $unlikeForm.on("submit", handleLikeSubmit)
+
+
