@@ -70,7 +70,7 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
-    
+
     def test_show_message(self):
         """ Can the message page be shown?"""
         with self.client as c:
@@ -85,7 +85,7 @@ class MessageViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn("Hello", html)
             self.assertIn('id="messages"', html)
-            
+
             # test for when message id is not found
             resp = c.get("/messages/66666666")
             self.assertEqual(resp.status_code, 404)
@@ -105,7 +105,7 @@ class MessageViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertNotIn("Hello", html)
             self.assertIn('id="user-show"', html)
-        
+
             u2 = User.signup(username="testuser2",
                              email="test2@test.com",
                              password="testuser2",
@@ -119,11 +119,22 @@ class MessageViewTestCase(TestCase):
             html = resp.get_data(as_text=True)
             self.assertIn("Access unauthorized.", html)
 
-            
+    def test_like_and_unlike_warble(self):
+        """ Can a user like the warble?"""
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess[CURR_USER_KEY] = self.testuser.id
 
+            c.post("/messages/new", data={"text": "Hello"})
+            m = Message.query.one()
+            self.assertEqual(Like.query.count(), 0)
 
+            # Test /like view
+            resp = c.post( f"/messages/{m.id}/like", follow_redirects=True)
+            self.assertEqual(Like.query.count(), 1)
+            self.assertEqual(resp.status_code, 200)
 
-
-            
-
-
+            # Test /unlike view
+            resp = c.post( f"/messages/{m.id}/unlike", follow_redirects=True)
+            self.assertEqual(Like.query.count(), 0)
+            self.assertEqual(resp.status_code, 200)
