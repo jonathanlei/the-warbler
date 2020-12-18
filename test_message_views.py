@@ -42,7 +42,7 @@ class MessageViewTestCase(TestCase):
         Message.query.delete()
 
         self.client = app.test_client()
-
+        # store id instead
         self.testuser = User.signup(username="testuser",
                                     email="test@test.com",
                                     password="testuser",
@@ -70,6 +70,8 @@ class MessageViewTestCase(TestCase):
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
+        # not logged in, message
+        # coverage
 
     def test_show_message(self):
         """ Can the message page be shown?"""
@@ -78,7 +80,7 @@ class MessageViewTestCase(TestCase):
                 sess[CURR_USER_KEY] = self.testuser.id
 
             c.post("/messages/new", data={"text": "Hello"})
-
+            # find the exact message
             m = Message.query.one()
             resp = c.get(f"/messages/{m.id}")
             html = resp.get_data(as_text=True)
@@ -91,7 +93,8 @@ class MessageViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 404)
 
     def test_delete_message(self):
-        """ Can the user delete its own message? """
+        """ Can the user delete its own message? 
+        success and fail case """
         with self.client as c:
             with c.session_transaction() as sess:
                 sess[CURR_USER_KEY] = self.testuser.id
@@ -105,7 +108,7 @@ class MessageViewTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertNotIn("Hello", html)
             self.assertIn('id="user-show"', html)
-
+            # helper 
             u2 = User.signup(username="testuser2",
                              email="test2@test.com",
                              password="testuser2",
@@ -138,3 +141,5 @@ class MessageViewTestCase(TestCase):
             resp = c.post( f"/messages/{m.id}/unlike", follow_redirects=True)
             self.assertEqual(Like.query.count(), 0)
             self.assertEqual(resp.status_code, 200)
+
+            # junk id, own warble, like already liked

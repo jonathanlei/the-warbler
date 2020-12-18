@@ -117,7 +117,7 @@ class UserModelTestCase(TestCase):
 
     def test_user_register_validation(self):
         """ Can we create new users?"""
-
+  # pass in function 
         new_user = User.signup(username="new.user",
                                email="new_user@test.com",
                                password="HASH_THIS_PASS",
@@ -169,6 +169,5 @@ class UserModelTestCase(TestCase):
                 password="HASHED_PASSWORD",
                 image_url="https://vignette.wikia.nocookie.net/questionablecontent/images/7/7a/Yelling_Bird.png/revision/latest?cb=20100107084653"
         )
-        db.session.add(u)
         db.session.commit()
         return u

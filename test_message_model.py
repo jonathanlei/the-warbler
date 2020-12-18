@@ -37,6 +37,7 @@ class UserModelTestCase(TestCase):
         )
         db.session.add(u)
         db.session.commit()
+        # store id 
         self.user = u
         self.client = app.test_client()
 
@@ -48,7 +49,7 @@ class UserModelTestCase(TestCase):
 
         db.session.add(m)
         db.session.commit()
-
+        # test list type
         self.assertEqual(len(self.user.messages), 1)
         self.assertEqual(m.user, self.user)
         self.assertEqual(f"{m}",
@@ -66,7 +67,8 @@ class UserModelTestCase(TestCase):
         db.session.commit()
 
         like = Like.query.get((self.user.id, m2.id))
-
+        # test list type
+        # query count
         self.assertEqual(len(self.user.liked_messages), 1)
         self.assertEqual(like.user_id, self.user.id)
         self.assertEqual(like.msg_id, m2.id)
