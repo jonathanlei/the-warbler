@@ -74,21 +74,23 @@ class User(db.Model):
         nullable=False,
     )
 
-    messages = db.relationship('Message', order_by='Message.timestamp.desc()')
+    messages = db.relationship('Message',
+                               cascade="all, delete",
+                               order_by='Message.timestamp.desc()')
 
     followers = db.relationship(
         "User",
         secondary="follows",
         primaryjoin=(Follows.user_being_followed_id == id),
-        secondaryjoin=(Follows.user_following_id == id)
-    )
+        secondaryjoin=(Follows.user_following_id == id),
+        cascade="all, delete")
 
     following = db.relationship(
         "User",
         secondary="follows",
         primaryjoin=(Follows.user_following_id == id),
-        secondaryjoin=(Follows.user_being_followed_id == id)
-    )
+        secondaryjoin=(Follows.user_being_followed_id == id),
+        cascade="all, delete")
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"

@@ -1,7 +1,7 @@
 {% extends 'users/detail.html' %}
 {% block user_details %}
   <div class="col-sm-6" id="user-show">
-    <ul class="list-group" id="{{user.id}}-messages">
+    <ul class="list-group" id="messages" data-page="show-user">
 
       {% for message in user.messages %}
           {% include '_message.html' %}

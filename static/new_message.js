@@ -6,9 +6,8 @@ async function handleNewWarbleSubmit(evt){
   $form = $(evt.target);
   let data = $form.serialize();
   let message_html = await $.post(`/messages/new`, data=data);
-  let user_id = $('#user_id').data("userid")
-  $("#home-messages").prepend(message_html)
-  $(`#${user_id}-messages`).prepend(message_html)
+  $("ul[data-page='home']").prepend(message_html);
+  $("ul[data-page='show-user']").prepend(message_html);
 }
 
 

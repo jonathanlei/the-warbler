@@ -260,12 +260,15 @@ def delete_user():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    do_logout()
 
-    db.session.delete(g.user)
-    db.session.commit()
-
-    return redirect("/signup")
+    if (len(g.user.messages) > 1):
+        flash("You can't delete your account while you still have warbles!!!", "danger")
+        return redirect("/")
+    else:
+        do_logout()
+        db.session.delete(g.user)
+        db.session.commit()
+        return redirect("/signup")
 
 
 ##############################################################################

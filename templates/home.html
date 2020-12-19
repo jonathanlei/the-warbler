@@ -45,7 +45,7 @@
     </aside>
 
     <div class="col-lg-6 col-md-8 col-sm-12">
-      <ul class="list-group" id="home-messages">
+      <ul class="list-group" id="messages" data-page="home">
         {% for message in messages %}
         {% set user = message.user %}
           {% include '_message.html' %}

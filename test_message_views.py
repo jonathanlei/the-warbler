@@ -66,7 +66,7 @@ class MessageViewTestCase(TestCase):
             resp = c.post("/messages/new", data={"text": "Hello"})
 
             # Make sure it redirects
-            self.assertEqual(resp.status_code, 302)
+            self.assertEqual(resp.status_code, 200)
 
             msg = Message.query.one()
             self.assertEqual(msg.text, "Hello")
